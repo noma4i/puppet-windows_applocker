@@ -1,23 +1,35 @@
 # **WORK IN PROGRESS**
 # windows_applocker
 
-Manage Windows Applocker policy. 
+Manage Windows Applocker policy.
 
 [Overview of Windows AppLocker](https://technet.microsoft.com/en-us/library/dd759113.aspx)
 
 #### Available options
 
-    `action` Allow | Deny
+  `action`
 
-    `rule_id` uniq numbe to ensure rules deduplication
+    Allow | Deny
 
-    `identity` Everyone, Admnistrator or other NT Identity name
+  `rule_id`
 
-    `app_path` Application path
+    uniq numbe to ensure rules deduplication
 
-    `app_name` Application name, `calculator.exe`
+  `identity`
 
-    `app_sha256` precalculated sha256 checksum
+    Everyone, Admnistrator or other NT Identity name
+
+  `app_path`
+
+    Application path
+
+  `app_name`
+
+    Application name, `calculator.exe`
+
+  `app_sha256`
+
+    precalculated sha256 checksum
 
 #### How to use
 
