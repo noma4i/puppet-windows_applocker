@@ -20,7 +20,7 @@ $identitySid = $strSID.Value
 
 "<AppLockerPolicy Version=""1"">
         <RuleCollection Type=""Exe"" EnforcementMode=""Enabled"">
-            <FileHashRule Id=""$id"" Name=""temp-$appPath"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
+            <FileHashRule Id=""$id"" Name=""<%= @action %> $appName"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
               <Conditions>
                 <FileHashCondition>
                   <FileHash Type=""SHA256"" SourceFileLength=""$appLength"" SourceFileName=""$appName"" Data=""0x$appHash""/>
@@ -31,4 +31,4 @@ $identitySid = $strSID.Value
 </AppLockerPolicy>" | out-file $tmpFileName
 
 Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
-# Remove-Item $tmpFileName
+Remove-Item $tmpFileName
