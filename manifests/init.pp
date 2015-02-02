@@ -14,7 +14,7 @@ define windows_applocker (
         timeout  => 1800
       }->
       exec { 'cmd /c gpupdate || exit /b 0':
-        path => $::path,
+        path      => $::path,
         logoutput => false
       }
     }
