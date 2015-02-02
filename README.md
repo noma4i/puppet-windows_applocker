@@ -1,6 +1,7 @@
+# **WORK IN PROGRESS**
 # windows_applocker
 
-Manage Windows Applocker policy. *WORK IN PROGRESS*
+Manage Windows Applocker policy. 
 
 [Overview of Windows AppLocker](https://technet.microsoft.com/en-us/library/dd759113.aspx)
 
