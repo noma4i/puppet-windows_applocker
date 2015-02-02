@@ -1,0 +1,23 @@
+Import-Module AppLocker
+
+$id = [guid]::NewGuid()
+$tmpFileName = "c:\rule_path.xml"
+$appPath = "<%= @app_path %>"
+$appName = "<%= @app_name %>"
+$identity = "<%= @identity %>"
+$objUser = New-Object System.Security.Principal.NTAccount($identity)
+$strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+$identitySid = $strSID.Value
+
+"<AppLockerPolicy Version=""1"">
+        <RuleCollection Type=""Exe"" EnforcementMode=""Enabled"">
+            <FilePathRule Id=""$id"" Name=""$appPath"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
+                <Conditions>
+                    <FilePathCondition Path=""$appPath"" />
+                </Conditions>
+            </FilePathRule>
+        </RuleCollection>
+</AppLockerPolicy>" | out-file $tmpFileName
+
+Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
+Remove-Item $tmpFileName

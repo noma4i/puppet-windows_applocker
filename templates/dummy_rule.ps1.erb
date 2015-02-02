@@ -1,0 +1,15 @@
+Import-Module AppLocker
+
+$tmpFileName = "${env:temp}\temp.xml"
+$appPath = "C:\Windows\system32\calc.exe"
+
+[xml]$ruleXml = Get-AppLockerPolicy -Local -XML
+$ruleNode = $ruleXml.SelectSingleNode("//FilePathRule[@Name='temp-$appPath']")
+
+if ($ruleNode -ne $null)
+{
+    [void]$ruleNode.ParentNode.RemoveChild($ruleNode)
+    $ruleXml.Save($tmpFileName)
+    Set-AppLockerPolicy -XMLPolicy $tmpFileName
+    Remove-Item $tmpFileName
+}

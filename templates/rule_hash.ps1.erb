@@ -1,0 +1,34 @@
+Import-Module AppLocker
+
+$guidPath = "c:\rules_<%= @permanent_id %>.txt"
+if ((Test-Path $guidPath) -eq $false){
+  $id = [guid]::NewGuid()
+  Set-Content -Path $guidPath $id
+} else {
+  $id = Get-Content -Path $guidPath
+}
+
+$tmpFileName = "c:\rule_hash.xml"
+$appPath = "<%= @app_path %>"
+$appHash = Get-FileHash $appPath | select -ExpandProperty Hash
+$appLength = (Get-Item $appPath).length
+$appName = "<%= @app_name %>"
+$identity = "<%= @identity %>"
+$objUser = New-Object System.Security.Principal.NTAccount($identity)
+$strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+$identitySid = $strSID.Value
+
+"<AppLockerPolicy Version=""1"">
+        <RuleCollection Type=""Exe"" EnforcementMode=""Enabled"">
+            <FileHashRule Id=""$id"" Name=""temp-$appPath"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
+              <Conditions>
+                <FileHashCondition>
+                  <FileHash Type=""SHA256"" SourceFileLength=""$appLength"" SourceFileName=""$appName"" Data=""0x$appHash""/>
+                </FileHashCondition>
+              </Conditions>
+            </FileHashRule>
+        </RuleCollection>
+</AppLockerPolicy>" | out-file $tmpFileName
+
+Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
+# Remove-Item $tmpFileName
