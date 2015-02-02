@@ -1,6 +1,6 @@
 # windows_applocker
 
-Manage Windows Applocker policy.
+Manage Windows Applocker policy. *WORK IN PROGRESS*
 
 [Overview of Windows AppLocker](https://technet.microsoft.com/en-us/library/dd759113.aspx)
 
@@ -19,8 +19,6 @@ Manage Windows Applocker policy.
     `app_sha256` precalculated sha256 checksum
 
 #### How to use
-
-  - WIP -
 
   ````puppet
     windows_applocker { 'Lock something by Path':
