@@ -11,3 +11,10 @@ Manage Windows Applocker policy.
 #### How to use
 
   - WIP -
+
+  ````puppet
+    windows_applocker { 'Lock something':
+      ensure => 'present'
+    }
+
+  ````
