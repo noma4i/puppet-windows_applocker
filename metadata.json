@@ -1,0 +1,35 @@
+{
+  "name": "noma4i-windows_applocker",
+  "version": "0.2.0",
+  "author": "noma4i",
+  "summary": "Manage Windows Applocker",
+  "license": "Apache-2.0",
+  "source": "https://github.com/noma4i/puppet-windows_applocker",
+  "project_page": "https://github.com/noma4i/puppet-windows_applocker",
+  "issues_url": "https://github.com/noma4i/puppet-windows_applocker/issues",
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.3.0 < 4.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Windows",
+      "operatingsystemrelease": [
+        "Server 2008 R2",
+        "Server 2012",
+        "Server 2012 R2",
+        "7",
+        "8"
+      ]
+    }
+  ],
+  "dependencies": [
+    {"name":"joshcooper/powershell","version_requirement":">=1.0.0 <5.0.0"}
+  ]
+}
