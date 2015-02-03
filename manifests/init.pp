@@ -22,12 +22,12 @@ define windows_applocker (
       if $app_path == undef { fail('APP PATH is COMPULSORY!\n') }
       if $app_name == undef { fail('APP NAME is COMPULSORY!\n') }
 
-      exec { "${action} ${app_name}":
-        command  => template('windows_applocker/rule_path.ps1.erb'),
-        provider => 'powershell',
-        subscribe => Exec['Creating GUID'],
-        timeout  => 1800
-      }
+      # exec { "${action} ${app_name}":
+      #   command  => template('windows_applocker/rule_path.ps1.erb'),
+      #   provider => 'powershell',
+      #   subscribe => Exec['Creating GUID'],
+      #   timeout  => 1800
+      # }
 
     }
     'hash': {
@@ -40,11 +40,11 @@ define windows_applocker (
       fail('Invalid RULE TYPE option!\n')
     }
   }
-  exec { 'cmd /c gpupdate || exit /b 0':
-    path      => $::path,
-    subscribe => Exec["${action} ${app_name}"],
-    logoutput => false
-  }
+  # exec { 'cmd /c gpupdate || exit /b 0':
+  #   path      => $::path,
+  #   subscribe => Exec["${action} ${app_name}"],
+  #   logoutput => false
+  # }
 }
       # exec { "Allow ${app_name}":
       #   command  => template('windows_applocker/rule_hash.ps1.erb'),

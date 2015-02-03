@@ -1,4 +1,5 @@
 $guidPath = "<%= @appdata_folder %>\rules_<%= @rule_id %>.txt"
+$guid = [system.guid]::NewGuid() | select -ExpandProperty Guid
 if ((Test-Path $guidPath) -eq $False){
-  Set-Content -Path $guidPath -Value $id
+  Set-Content $guidPath $guid
 }
