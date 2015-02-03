@@ -22,4 +22,3 @@ $identitySid = $strSID.Value
 </AppLockerPolicy>" | out-file $tmpFileName
 
 Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
-# Remove-Item $tmpFileName
