@@ -1,7 +1,9 @@
 Import-Module AppLocker
 
-$id = [guid]::NewGuid()
-$tmpFileName = "c:\rule_path.xml"
+$guidPath = "${env:appdata}\rules_<%= @rule_id %>.txt"
+$id = Get-Content -Path $guidPath
+
+$tmpFileName = "${env:temp}\rule_path.xml"
 $appPath = "<%= @app_path %>"
 $appName = "<%= @app_name %>"
 $identity = "<%= @identity %>"

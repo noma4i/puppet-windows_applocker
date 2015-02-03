@@ -1,5 +1,5 @@
 define windows_applocker (
-  $ensure   = 'enabled',
+  $rule_type = undef,
   $action = 'Allow',
   $rule_id = undef,
   $identity = 'Everyone',
@@ -7,8 +7,42 @@ define windows_applocker (
   $app_name = undef,
   $app_sha256 = undef
 ){
-  case $ensure {
-    'enabled', 'present': {
+  if $rule_id == undef {
+    fail('RULE ID is COMPULSORY!\n')
+  } else {
+    exec { "Creating GUID for ${rule_id}":
+      command  => template('windows_applocker/guid.ps1.erb'),
+      provider => 'powershell',
+      timeout  => 1800
+    }
+  }
+  case $rule_type {
+    'path': {
+      if $app_path == undef { fail('APP PATH is COMPULSORY!\n') }
+      if $app_name == undef { fail('APP NAME is COMPULSORY!\n') }
+
+      exec { "#{action} ${app_name}":
+        command  => template('windows_applocker/rule_path.ps1.erb'),
+        provider => 'powershell',
+        timeout  => 1800
+      }
+
+    }
+    'hash': {
+
+    }
+    'wildcard': {
+
+    }
+    exec { 'cmd /c gpupdate || exit /b 0':
+      path      => $::path,
+      logoutput => false
+    }
+    default: {
+      fail('Invalid RULE TYPE option!\n')
+    }
+  }
+}
       # exec { "Allow ${app_name}":
       #   command  => template('windows_applocker/rule_hash.ps1.erb'),
       #   provider => 'powershell',
@@ -18,9 +52,3 @@ define windows_applocker (
       #   path      => $::path,
       #   logoutput => false
       # }
-    }
-    default: {
-      fail('Invalid ensure option!\n')
-    }
-  }
-}
