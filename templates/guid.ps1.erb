@@ -1,4 +1,4 @@
 $guidPath = "<%= @appdata_folder %>\rules_<%= @rule_id %>.txt"
 if ((Test-Path $guidPath) -eq $False){
-  Set-Content -Path $guidPath $id
+  Set-Content -Path $guidPath -Value $id
 }
