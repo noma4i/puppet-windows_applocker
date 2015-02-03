@@ -1,4 +1,4 @@
-$guidPath = "${env:appdata}\rules_<%= @rule_id %>.txt"
+$guidPath = "<%= @appdata_folder %>\rules_<%= @rule_id %>.txt"
 if ((Test-Path $guidPath) -eq $false){
   $id = [guid]::NewGuid()
   Set-Content -Path $guidPath $id

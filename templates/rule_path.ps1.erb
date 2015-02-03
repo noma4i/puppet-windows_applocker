@@ -1,9 +1,9 @@
 Import-Module AppLocker
 
-$guidPath = "${env:appdata}\rules_<%= @rule_id %>.txt"
+$guidPath = "<%= @appdata_folder %>\rules_<%= @rule_id %>.txt"
 $id = Get-Content -Path $guidPath
 
-$tmpFileName = "${env:temp}\rule_path.xml"
+$tmpFileName = "<%= @appdata_folder %>\rule_path.xml"
 $appPath = "<%= @app_path %>"
 $appName = "<%= @app_name %>"
 $identity = "<%= @identity %>"
@@ -22,4 +22,4 @@ $identitySid = $strSID.Value
 </AppLockerPolicy>" | out-file $tmpFileName
 
 Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
-Remove-Item $tmpFileName
+# Remove-Item $tmpFileName
