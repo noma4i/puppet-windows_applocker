@@ -13,8 +13,8 @@ define windows_applocker (
   } else {
     exec { "Creating GUID":
       command  => template('windows_applocker/guid.ps1.erb'),
+      creates => "$appdata_folder\rules_$rule_id",
       provider => 'powershell',
-      timeout  => 1800
     }
   }
   case $rule_type {
@@ -22,12 +22,12 @@ define windows_applocker (
       if $app_path == undef { fail('APP PATH is COMPULSORY!\n') }
       if $app_name == undef { fail('APP NAME is COMPULSORY!\n') }
 
-      # exec { "${action} ${app_name}":
-      #   command  => template('windows_applocker/rule_path.ps1.erb'),
-      #   provider => 'powershell',
-      #   subscribe => Exec['Creating GUID'],
-      #   timeout  => 1800
-      # }
+      exec { "${action} ${app_name}":
+        command  => template('windows_applocker/rule_path.ps1.erb'),
+        provider => 'powershell',
+        require => Exec['Creating GUID'],
+        timeout  => 1800
+      }
 
     }
     'hash': {
