@@ -40,18 +40,9 @@ define windows_applocker (
       fail('Invalid RULE TYPE option!\n')
     }
   }
-  # exec { 'cmd /c gpupdate || exit /b 0':
-  #   path      => $::path,
-  #   subscribe => Exec["${action} ${app_name}"],
-  #   logoutput => false
-  # }
+  exec { 'cmd /c gpupdate || exit /b 0':
+    path      => $::path,
+    subscribe => Exec["${action} ${app_name}"],
+    logoutput => false
+  }
 }
-      # exec { "Allow ${app_name}":
-      #   command  => template('windows_applocker/rule_hash.ps1.erb'),
-      #   provider => 'powershell',
-      #   timeout  => 1800
-      # }->
-      # exec { 'cmd /c gpupdate || exit /b 0':
-      #   path      => $::path,
-      #   logoutput => false
-      # }
