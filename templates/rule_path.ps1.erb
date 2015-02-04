@@ -2,23 +2,28 @@ Import-Module AppLocker
 
 $pathToGuid = "<%= @appdata_folder %>\rules_<%= @rule_id %>"
 $id = Get-Content -Path $pathToGuid
+$skip = $False
+Get-AppLockerPolicy -Effective | Select -ExpandProperty RuleCollections | foreach-object{
+if($_.Id.value -eq $id){ $skip = $True }}
+if($skip -eq $False){
+  $tmpFileName = "<%= @appdata_folder %>\rule_path.xml"
+  $appPath = "<%= @app_path %>"
+  $appName = "<%= @app_name %>"
+  $identity = "<%= @identity %>"
+  $objUser = New-Object System.Security.Principal.NTAccount($identity)
+  $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+  $identitySid = $strSID.Value
 
-$tmpFileName = "c:\ProgramData\rule_path.xml"
-$appPath = "<%= @app_path %>"
-$appName = "<%= @app_name %>"
-$identity = "<%= @identity %>"
-$objUser = New-Object System.Security.Principal.NTAccount($identity)
-$strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
-$identitySid = $strSID.Value
+  "<AppLockerPolicy Version=""1"">
+          <RuleCollection Type=""Exe"" EnforcementMode=""Enabled"">
+              <FilePathRule Id=""$id"" Name=""$appPath"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
+                  <Conditions>
+                      <FilePathCondition Path=""$appPath"" />
+                  </Conditions>
+              </FilePathRule>
+          </RuleCollection>
+  </AppLockerPolicy>" | out-file $tmpFileName
 
-"<AppLockerPolicy Version=""1"">
-        <RuleCollection Type=""Exe"" EnforcementMode=""Enabled"">
-            <FilePathRule Id=""$id"" Name=""$appPath"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
-                <Conditions>
-                    <FilePathCondition Path=""$appPath"" />
-                </Conditions>
-            </FilePathRule>
-        </RuleCollection>
-</AppLockerPolicy>" | out-file $tmpFileName
-
-Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
+  Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
+  Remove-Item $tmpFileName
+}
