@@ -12,18 +12,20 @@ define windows_applocker (
   if $rule_id == undef {
     fail('RULE ID is COMPULSORY!\n')
   } else {
-    exec { "Creating GUID":
+    exec { "Creating GUID for Rule #${rule_id}":
       command  => template('windows_applocker/guid.ps1.erb'),
-      creates => "$appdata_folder\rules_$rule_id",
+      creates => "$appdata_folder\rules_${rule_id}",
       provider => 'powershell',
     }
   }
   case $rule_type {
     'path': {
+      $real_rule = $rule_type
       if $app_path == undef { fail('APP PATH is COMPULSORY!\n') }
       if $app_name == undef { fail('APP NAME is COMPULSORY!\n') }
     }
     'hash': {
+      $real_rule = $rule_type
       if $app_sha256 == undef {
         if $app_path == undef { fail('APP PATH is COMPULSORY!\n') }
         if $app_name == undef { fail('APP NAME is COMPULSORY!\n') }
@@ -33,21 +35,17 @@ define windows_applocker (
       }
     }
     'wildcard': {
+      $real_rule = 'path'
       if $app_path == undef { fail('APP PATH is COMPULSORY!\n') }
-      $rule_type = 'path'
     }
     default: {
       fail('Invalid RULE TYPE option!\n')
     }
   }
-  exec { "${action} ${app_name}":
-    command  => template("windows_applocker/rule_$rule_type.ps1.erb"),
+  exec { "${action} ${app_name} by ${rule_type} rule #${rule_id}":
+    command  => template("windows_applocker/rule_${real_rule}.ps1.erb"),
     provider => 'powershell',
-    require => Exec['Creating GUID'],
+    require => Exec["Creating GUID for Rule #${rule_id}"],
     timeout  => 1800
-  }->
-  exec { 'cmd /c gpupdate || exit /b 0':
-    path      => $::path,
-    logoutput => false
   }
 }
