@@ -7,25 +7,32 @@ Manage Windows Applocker policy.
 #### Available options
 
 **rule_type**
-    - path
-    - hash
-    - wildcard
+- path
+- hash
+- wildcard
+    
 **action**
-    - Allow (default)
-    - Deny
+- Allow (default)
+- Deny
+    
 **rule_id**
-    Rule id MUST be uniq. Is used to check rule presence
+- Rule id MUST be uniq. Is used to check rule presence
+    
 **identity**
-    - Everyone (default)
-    - NT Identity name like: All, Administrator etc
+- Everyone (default)
+- NT Identity name like: All, Administrator etc
+    
 **app_path**
-    Path
+- Path
+
 **app_name**
-    Application name, `calculator.exe`
+- Application name, `calculator.exe`
+
 **app_sha256**
-    Precalculated sha256 checksum
+- Precalculated sha256 checksum
+
 **app_length**
-    Precalculated app length in bytes
+- Precalculated app length in bytes
 
 #### How to use
 
