@@ -2,37 +2,26 @@ Import-Module AppLocker
 
 $pathToGuid = "<%= @appdata_folder %>\rules_<%= @rule_id %>"
 $id = Get-Content -Path $pathToGuid
-$skip = $False
-Get-AppLockerPolicy -Effective | Select -ExpandProperty RuleCollections | foreach-object{
-if($_.Id.value -eq $id){ $skip = $True }}
-if($skip -eq $False){
-  $tmpFileName = "<%= @appdata_folder %>\rule_hash.xml"
-  $appPath = "<%= @app_path %>"
-  if ("<%= app_sha256 %>".Length -gt 0){
-    $appHash = "<%= app_sha256 %>"
-    $appLength = "<%= app_length %>"
-  } else {
-    $appHash = Get-FileHash $appPath | select -ExpandProperty Hash
-    $appLength = (Get-Item $appPath).length
-  }
-  $appName = "<%= @app_name %>"
-  $identity = "<%= @identity %>"
-  $objUser = New-Object System.Security.Principal.NTAccount($identity)
-  $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
-  $identitySid = $strSID.Value
 
-  "<AppLockerPolicy Version=""1"">
-          <RuleCollection Type=""Exe"" EnforcementMode=""Enabled"">
-              <FileHashRule Id=""$id"" Name=""<%= @action %> $appName"" Description=""<%= @action %> access to $appPath"" UserOrGroupSid=""$identitySid"" Action=""<%= @action %>"">
-                <Conditions>
-                  <FileHashCondition>
-                    <FileHash Type=""SHA256"" SourceFileLength=""$appLength"" SourceFileName=""$appName"" Data=""0x$appHash""/>
-                  </FileHashCondition>
-                </Conditions>
-              </FileHashRule>
-          </RuleCollection>
-  </AppLockerPolicy>" | out-file $tmpFileName
-
-  Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge
-  Remove-Item $tmpFileName
+$tmpFileName = "<%= @appdata_folder %>\rule_path.xml"
+$appPath = "<%= @app_path %>"
+$appName = "<%= @app_name %>"
+$identity = "<%= @identity %>"
+$objUser = New-Object System.Security.Principal.NTAccount($identity)
+$strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+$identitySid = $strSID.Value
+if ("<%= @app_sha256 %>".Length -gt 0){
+  $appHash = "<%= @app_sha256 %>"
+  $appLength = "<%= @app_length %>"
+} else {
+  $appHash = Get-FileHash $appPath | select -ExpandProperty Hash
+  $appLength = (Get-Item $appPath).length
 }
+
+$lockerXMLRule = '<AppLockerPolicy Version="1"><RuleCollection Type="Exe" EnforcementMode="Enabled"><FileHashRule Id="'+$id+'" Name="#<%= @rule_id %> <%= @action %> '+$appName+'" Description="<%= @action %> access to '+$appPath+'" UserOrGroupSid="'+$identitySid+'" Action="<%= @action %>"><Conditions><FileHashCondition><FileHash Type="SHA256" SourceFileLength="'+$appLength+'" SourceFileName="'+$appName+'" Data="0x'+$appHash+'"/></FileHashCondition></Conditions></FileHashRule></RuleCollection></AppLockerPolicy>'
+
+$perform = $true
+Get-AppLockerPolicy -Effective | Select -ExpandProperty RuleCollections | foreach-object{ if ($_.Id.value -eq $id){ $perform = $false }}
+Set-Content $tmpFileName $lockerXMLRule
+if ($perform){ Set-AppLockerPolicy -XMLPolicy $tmpFileName -Merge }
+Remove-Item $tmpFileName
