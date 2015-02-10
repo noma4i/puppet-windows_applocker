@@ -10,18 +10,18 @@ Manage Windows Applocker policy.
 - path
 - hash
 - wildcard
-    
+
 **action**
 - Allow (default)
 - Deny
-    
+
 **rule_id**
 - Rule id MUST be uniq. Is used to check rule presence
-    
+
 **identity**
 - Everyone (default)
 - NT Identity name like: All, Administrator etc
-    
+
 **app_path**
 - Path
 
@@ -74,6 +74,14 @@ Manage Windows Applocker policy.
       app_name => 'test.exe',
       app_sha256 => '6c383b5b1c396bdd1484d77d479ca5cb7ac30d8b8352b1975f8c9c59132562ac',
       app_length => '202020'
+    }
+
+    windows_applocker { 'Lock Regedit':
+      rule_type => 'hash',
+      rule_id => 600,
+      app_path => '%WINDIR%\regedit.exe',
+      app_name => 'regedit.exe',
+      action => 'Deny'
     }
 
   ````
