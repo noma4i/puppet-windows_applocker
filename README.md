@@ -1,4 +1,3 @@
-# **WORK IN PROGRESS**
 # windows_applocker
 
 Manage Windows Applocker policy.
@@ -7,61 +6,74 @@ Manage Windows Applocker policy.
 
 #### Available options
 
-  `action`
-
-    Allow | Deny
-
-  `rule_id`
-
-    uniq numbe to ensure rules deduplication
-
-  `identity`
-
-    Everyone, Admnistrator or other NT Identity name
-
-  `app_path`
-
-    Application path
-
-  `app_name`
-
+**rule_type**
+    - path
+    - hash
+    - wildcard
+**action**
+    - Allow (default)
+    - Deny
+**rule_id**
+    Rule id MUST be uniq. Is used to check rule presence
+**identity**
+    - Everyone (default)
+    - NT Identity name like: All, Administrator etc
+**app_path**
+    Path
+**app_name**
     Application name, `calculator.exe`
-
-  `app_sha256`
-
-    precalculated sha256 checksum
+**app_sha256**
+    Precalculated sha256 checksum
+**app_length**
+    Precalculated app length in bytes
 
 #### How to use
 
   ````puppet
-    windows_applocker { 'Lock something by Path':
-      ensure => 'present',
-      action => 'Deny',
+    windows_applocker { 'Default Rule Windows':
+      rule_type => 'wildcard',
+      rule_id => 600,
+      app_path => '%WINDIR%\*',
+    }
+    windows_applocker { 'Default Rule Program Files':
+      rule_type => 'wildcard',
+      rule_id => 700,
+      app_path => '%PROGRAMFILES%\*',
+    }
+
+    windows_applocker { 'Unlock WABMIG':
       rule_type => 'path',
-      rule_id => 1,
+      rule_id => 100,
       app_path => 'C:\Program Files\Windows Mail\wabmig.exe',
       app_name => 'wabmig.exe'
     }
-  ````
 
-  ````puppet
-    windows_applocker { 'Lock something By Hash':
-      ensure => 'present',
-      action => 'Deny',
+    windows_applocker { 'Unlock WABMIG by hash':
       rule_type => 'hash',
-      rule_id => 2,
+      rule_id => 200,
       app_path => 'C:\Program Files\Windows Mail\wabmig.exe',
       app_name => 'wabmig.exe'
     }
-  ````
 
-  ````puppet
-    windows_applocker { 'Lock something By KNOWN Hash':
-      ensure => 'present',
-      action => 'Deny',
+    windows_applocker { 'Unlock WABMIG by PATH Mask':
+      rule_type => 'wildcard',
+      rule_id => 300,
+      app_path => 'C:\Program Files\Windows Mail\*'
+    }
+
+    windows_applocker { 'Unlock WABMIG by KNOWN Hash':
       rule_type => 'hash',
-      rule_id => 3,
-      app_sha256 => 'ee6fa57f3dc1edb4bf663537665a4b6fe53927479416e4d893d11077699fc4fb',
-      app_name => 'wabmig.exe'
+      rule_id => 400,
+      app_name => 'test.exe',
+      app_sha256 => '6c383b5b1c396bdd1484d77d479ca5cb7ac30d8b8352b1975f8c9c59132562ac',
+      app_length => '202020'
+    }
+
+    windows_applocker { 'Unlock smthing by hash':
+      rule_type => 'hash',
+      rule_id => 500,
+      app_name => 'test1.exe',
+      app_sha256 => 'c23642bc41944deae848b55d24d52e78d195387a906f6edee0f2435dad0775f7',
+      app_length => '22528'
     }
   ````
