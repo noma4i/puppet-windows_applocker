@@ -44,7 +44,7 @@ define windows_applocker (
   exec { "${action} ${app_name} by ${rule_type} rule #${rule_id}":
     command  => template("windows_applocker/rule_${real_rule}.ps1.erb"),
     provider => 'powershell',
-    require => Exec["Creating GUID for Rule #${rule_id}"],
+    require  => Exec["Creating GUID for Rule #${rule_id}"],
     timeout  => 1800
   }
 }
