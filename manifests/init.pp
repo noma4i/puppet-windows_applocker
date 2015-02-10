@@ -14,7 +14,6 @@ define windows_applocker (
   } else {
     exec { "Creating GUID for Rule #${rule_id}":
       command  => template('windows_applocker/guid.ps1.erb'),
-      creates => "$appdata_folder\rules_${rule_id}",
       provider => 'powershell',
     }
   }
